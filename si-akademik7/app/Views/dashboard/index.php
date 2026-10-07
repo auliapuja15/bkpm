@@ -1,16 +1,25 @@
 <?php
-session_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard - SI Akademik</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -77,7 +86,9 @@ session_start();
         .logout:hover {
             background: #8c1f2a;
         }
+
     </style>
+
 </head>
 
 <body>
@@ -87,7 +98,9 @@ session_start();
     <?php if (isset($_SESSION['flash'])): ?>
 
         <div class="alert">
+
             <?= htmlspecialchars($_SESSION['flash']) ?>
+
         </div>
 
         <?php unset($_SESSION['flash']); ?>
@@ -101,11 +114,14 @@ session_start();
         Selamat datang di Sistem Informasi Akademik.
     </p>
 
+
     <?php if (isset($_SESSION['user'])): ?>
 
         <p>
             Anda login sebagai:
-            <strong><?= htmlspecialchars($_SESSION['user']) ?></strong>
+            <strong>
+                <?= htmlspecialchars($_SESSION['user']) ?>
+            </strong>
         </p>
 
     <?php endif; ?>
@@ -113,12 +129,21 @@ session_start();
 
     <div class="menu">
 
-        <a href="/si-akademik6/public/mahasiswa" class="btn">
+        <a
+            href="/bkpm/si-akademik7/public/mahasiswa"
+            class="btn">
+
             Data Mahasiswa
+
         </a>
 
-        <a href="/si-akademik6/public/logout" class="btn logout">
+
+        <a
+            href="/bkpm/si-akademik7/public/logout"
+            class="btn logout">
+
             Logout
+
         </a>
 
     </div>
@@ -126,4 +151,5 @@ session_start();
 </div>
 
 </body>
+
 </html>

@@ -6,16 +6,11 @@ class Mahasiswa
 {
     private string $nim;
     private string $nama;
-    private string $prodi;
 
-    public function __construct(
-        string $nim,
-        string $nama,
-        string $prodi
-    ) {
+    public function __construct(string $nim, string $nama)
+    {
         $this->nim = $nim;
         $this->nama = $nama;
-        $this->prodi = $prodi;
     }
 
     public function getNim(): string
@@ -28,13 +23,17 @@ class Mahasiswa
         return $this->nama;
     }
 
-    public function getProdi(): string
+    public function setNama(string $nama): void
     {
-        return $this->prodi;
+        if (strlen($nama) < 3) {
+            throw new \InvalidArgumentException("Nama terlalu pendek");
+        }
+
+        $this->nama = $nama;
     }
 
     public function getAngkatan(): string
     {
-        return "20" . substr($this->nim, 0, 2);
+        return substr($this->nim, 0, 2);
     }
 }

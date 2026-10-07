@@ -1,14 +1,20 @@
 <?php
 
-require_once __DIR__ . '/../../config/database.php';
+namespace App\Models;
 
+use App\Core\Database;
+use PDO;
+
+/**
+ * Model dasar: semua model turunan otomatis
+ * mendapat koneksi PDO lewat properti $db.
+ */
 class Model
 {
-    protected $db;
+    protected PDO $db;
 
     public function __construct()
     {
-        $database = new Database();
-        $this->db = $database->connect();
+        $this->db = Database::getInstance();
     }
 }

@@ -1,147 +1,105 @@
-<!DOCTYPE html>
-<html lang="id">
+<?php
+$base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+$title = 'Edit Mahasiswa';
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+require __DIR__ . '/../layouts/main.php';
+?>
 
-    <title>Edit Mahasiswa</title>
+<h2 class="mb-3">Edit Data Mahasiswa</h2>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-</head>
+<?php if ($errors): ?>
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            <?php foreach ($errors as $e): ?>
+                <li><?= htmlspecialchars($e) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php endif; ?>
 
-<body>
+<form
+    method="POST"
+    action="<?= $base . '/mahasiswa/update' ?>"
+    class="card card-body"
+>
+    <input type="hidden" name="id" value="<?= htmlspecialchars($data['id']) ?>">
 
-<div class="container mt-5">
+    <div class="mb-3">
+        <label class="form-label">NIM</label>
+        <input
+            type="text"
+            class="form-control"
+            name="nim"
+            value="<?= htmlspecialchars($data['nim']) ?>"
+            required
+        >
+    </div>
 
-    <h2>Edit Mahasiswa</h2>
+    <div class="mb-3">
+        <label class="form-label">Nama</label>
+        <input
+            type="text"
+            class="form-control"
+            name="nama"
+            value="<?= htmlspecialchars($data['nama']) ?>"
+            required
+        >
+    </div>
 
-    <hr>
+    <div class="mb-3">
+        <label class="form-label">Prodi</label>
+        <select class="form-select" name="prodi_id" required>
+            <option value="">-- Pilih Prodi --</option>
 
-    <form
-        action="/si-akademik8/public/mahasiswa/update"
-        method="POST">
-
-        <!-- NIM -->
-        <div class="mb-3">
-            <label class="form-label">
-                NIM
-            </label>
-
-            <input
-                type="text"
-                class="form-control"
-                name="nim"
-                value="<?= htmlspecialchars($mahasiswa['nim']) ?>"
-                readonly>
-        </div>
-
-        <!-- Nama -->
-        <div class="mb-3">
-            <label class="form-label">
-                Nama
-            </label>
-
-            <input
-                type="text"
-                class="form-control"
-                name="nama"
-                value="<?= htmlspecialchars($mahasiswa['nama']) ?>"
-                required>
-        </div>
-
-        <!-- Program Studi -->
-        <div class="mb-3">
-            <label class="form-label">
-                Program Studi
-            </label>
-
-            <select
-                name="id_prodi"
-                class="form-select"
-                required>
-
-                <?php foreach ($prodi as $p): ?>
-
-                    <option
-                        value="<?= $p['id_prodi'] ?>"
-                        <?= $p['id_prodi'] == $mahasiswa['id_prodi'] ? 'selected' : '' ?>>
-
-                        <?= htmlspecialchars($p['nama_prodi']) ?>
-
-                    </option>
-
-                <?php endforeach; ?>
-
-            </select>
-        </div>
-
-        <!-- Angkatan -->
-        <div class="mb-3">
-            <label class="form-label">
-                Angkatan
-            </label>
-
-            <input
-                type="number"
-                class="form-control"
-                name="angkatan"
-                value="<?= htmlspecialchars($mahasiswa['angkatan']) ?>"
-                min="2000"
-                max="2100"
-                required>
-        </div>
-
-        <!-- Status -->
-        <div class="mb-3">
-            <label class="form-label">
-                Status
-            </label>
-
-            <select
-                name="status"
-                class="form-select"
-                required>
-
+            <?php foreach ($prodi as $p): ?>
                 <option
-                    value="aktif"
-                    <?= $mahasiswa['status'] === 'aktif' ? 'selected' : '' ?>>
-                    Aktif
+                    value="<?= $p['id'] ?>"
+                    <?= (string) $data['prodi_id'] === (string) $p['id']
+                        ? 'selected'
+                        : '' ?>
+                >
+                    <?= htmlspecialchars($p['kode'] . ' - ' . $p['nama']) ?>
                 </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
 
+    <div class="mb-3">
+        <label class="form-label">Angkatan</label>
+        <input
+            type="number"
+            class="form-control"
+            name="angkatan"
+            value="<?= htmlspecialchars($data['angkatan']) ?>"
+            required
+        >
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status" required>
+            <?php foreach (['aktif', 'cuti', 'lulus'] as $s): ?>
                 <option
-                    value="cuti"
-                    <?= $mahasiswa['status'] === 'cuti' ? 'selected' : '' ?>>
-                    Cuti
+                    value="<?= $s ?>"
+                    <?= $data['status'] === $s ? 'selected' : '' ?>
+                >
+                    <?= ucfirst($s) ?>
                 </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
 
-                <option
-                    value="lulus"
-                    <?= $mahasiswa['status'] === 'lulus' ? 'selected' : '' ?>>
-                    Lulus
-                </option>
-
-            </select>
-        </div>
-
-        <!-- Tombol -->
-        <button
-            type="submit"
-            class="btn btn-warning">
-            Update
+    <div>
+        <button type="submit" class="btn btn-primary">
+            Simpan Perubahan
         </button>
 
-        <a
-            href="/si-akademik8/public/mahasiswa"
-            class="btn btn-secondary">
-            Kembali
+        <a class="btn btn-secondary" href="<?= $base . '/mahasiswa' ?>">
+            Batal
         </a>
-
-    </form>
+    </div>
+</form>
 
 </div>
-
 </body>
 </html>

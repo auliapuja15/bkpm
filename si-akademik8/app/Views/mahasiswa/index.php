@@ -1,282 +1,113 @@
-<!DOCTYPE html>
-<html lang="id">
+<?php
+$base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+$title = 'Data Mahasiswa';
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+require __DIR__ . '/../layouts/main.php';
+?>
 
-    <title>Data Mahasiswa</title>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Data Mahasiswa</h2>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 30px;
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-        }
+    <a class="btn btn-primary" href="<?= $base . '/mahasiswa/create' ?>">
+        + Tambah Mahasiswa
+    </a>
+</div>
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            max-width: 1100px;
-        }
+<form method="GET"
+      action="<?= $base . '/mahasiswa' ?>"
+      class="row g-2 mb-3">
 
-        h1 {
-            font-size: 36px;
-            margin: 0;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 16px;
-            text-decoration: none;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .btn-tambah {
-            background-color: #198754;
-            color: white;
-        }
-
-        .btn-edit {
-            background-color: #ffc107;
-            color: black;
-        }
-
-        .btn-hapus {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-            max-width: 1100px;
-        }
-
-        .search-box input {
-            padding: 10px;
-            width: 300px;
-            border: 1px solid #aaa;
-            border-radius: 5px;
-        }
-
-        .search-box button {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 5px;
-            background-color: #333;
-            color: white;
-            cursor: pointer;
-        }
-
-        .search-box a {
-            margin-left: 5px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            max-width: 1100px;
-        }
-
-        th,
-        td {
-            border: 1px solid #777;
-            padding: 12px 10px;
-            font-size: 16px;
-        }
-
-        th {
-            font-weight: bold;
-            text-align: center;
-            background-color: #333;
-            color: white;
-        }
-
-        td:first-child {
-            text-align: center;
-        }
-
-        td:nth-child(2) {
-            width: 120px;
-        }
-
-        td:nth-child(3) {
-            width: 200px;
-        }
-
-        td:nth-child(4) {
-            width: 280px;
-        }
-
-        td:nth-child(5),
-        td:nth-child(6) {
-            text-align: center;
-            width: 120px;
-        }
-
-        .aksi {
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .aksi form {
-            display: inline;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="header">
-
-        <h1>Data Mahasiswa</h1>
-
-        <a
-            href="/si-akademik8/public/mahasiswa/create"
-            class="btn btn-tambah">
-            + Tambah Mahasiswa
-        </a>
-
+    <div class="col-md-10">
+        <input
+            type="text"
+            class="form-control"
+            name="search"
+            value="<?= htmlspecialchars($search) ?>"
+            placeholder="Cari berdasarkan NIM atau nama..."
+        >
     </div>
 
-
-    <!-- Search -->
-    <div class="search-box">
-
-        <form
-            action="/si-akademik8/public/mahasiswa"
-            method="GET">
-
-            <input
-                type="text"
-                name="search"
-                placeholder="Cari NIM atau nama..."
-                value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
-
-            <button type="submit">
-                Cari
-            </button>
-
-            <?php if (!empty($_GET['search'])): ?>
-
-                <a href="/si-akademik8/public/mahasiswa">
-                    Reset
-                </a>
-
-            <?php endif; ?>
-
-        </form>
-
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-outline-primary">
+            Cari
+        </button>
     </div>
+</form>
 
+<div class="card">
+    <div class="card-body table-responsive">
 
-    <!-- Tabel -->
-    <table>
+        <table class="table table-bordered table-striped align-middle">
 
-        <thead>
-
-            <tr>
-                <th>No</th>
-                <th>NIM</th>
-                <th>Nama</th>
-                <th>Program Studi</th>
-                <th>Angkatan</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            <?php if (empty($mahasiswa)): ?>
-
+            <thead class="table-dark">
                 <tr>
-                    <td colspan="7" style="text-align: center;">
-                        Data mahasiswa tidak ditemukan.
-                    </td>
+                    <th>No</th>
+                    <th>NIM</th>
+                    <th>Nama</th>
+                    <th>Prodi</th>
+                    <th>Angkatan</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
                 </tr>
+            </thead>
 
-            <?php else: ?>
+            <tbody>
 
-                <?php $no = 1; ?>
-
-                <?php foreach ($mahasiswa as $mhs): ?>
-
+                <?php if (!$mahasiswa): ?>
                     <tr>
+                        <td colspan="7" class="text-center">
+                            Data tidak ditemukan.
+                        </td>
+                    </tr>
+                <?php endif; ?>
+
+                <?php foreach ($mahasiswa as $i => $mhs): ?>
+                    <tr>
+                        <td><?= $i + 1 ?></td>
+
+                        <td><?= htmlspecialchars($mhs['nim']) ?></td>
+
+                        <td><?= htmlspecialchars($mhs['nama']) ?></td>
 
                         <td>
-                            <?= $no++ ?>
+                            <?= htmlspecialchars(
+                                $mhs['kode_prodi'] . ' - ' . $mhs['nama_prodi']
+                            ) ?>
                         </td>
+
+                        <td><?= htmlspecialchars($mhs['angkatan']) ?></td>
 
                         <td>
-                            <?= htmlspecialchars($mhs['nim']) ?>
+                            <span class="badge text-bg-secondary">
+                                <?= htmlspecialchars($mhs['status']) ?>
+                            </span>
                         </td>
 
-                        <td>
-                            <?= htmlspecialchars($mhs['nama']) ?>
-                        </td>
-
-                        <td>
-                            <?= htmlspecialchars($mhs['nama_prodi']) ?>
-                        </td>
-
-                        <td>
-                            <?= htmlspecialchars($mhs['angkatan']) ?>
-                        </td>
-
-                        <td>
-                            <?= htmlspecialchars($mhs['status']) ?>
-                        </td>
-
-                        <td class="aksi">
-
-                            <!-- Edit -->
+                        <td class="text-nowrap">
                             <a
-                                href="/si-akademik8/public/mahasiswa/edit?nim=<?= urlencode($mhs['nim']) ?>"
-                                class="btn btn-edit">
+                                class="btn btn-sm btn-warning"
+                                href="<?= $base . '/mahasiswa/edit?id=' . $mhs['id'] ?>"
+                            >
                                 Edit
                             </a>
 
-                            <!-- Hapus -->
-                            <form
-                                action="/si-akademik8/public/mahasiswa/delete"
-                                method="POST"
-                                onsubmit="return confirm('Apakah kamu yakin ingin menghapus data mahasiswa ini?');">
-
-                                <input
-                                    type="hidden"
-                                    name="nim"
-                                    value="<?= htmlspecialchars($mhs['nim']) ?>">
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-hapus">
-                                    Hapus
-                                </button>
-
-                            </form>
-
+                            <a
+                                class="btn btn-sm btn-danger"
+                                href="<?= $base . '/mahasiswa/delete?id=' . $mhs['id'] ?>"
+                                onclick="return confirm('Yakin ingin menghapus data mahasiswa ini?')"
+                            >
+                                Hapus
+                            </a>
                         </td>
-
                     </tr>
-
                 <?php endforeach; ?>
 
-            <?php endif; ?>
+            </tbody>
+        </table>
 
-        </tbody>
+    </div>
+</div>
 
-    </table>
-
+</div>
 </body>
-
 </html>

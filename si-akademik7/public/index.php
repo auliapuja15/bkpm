@@ -2,45 +2,96 @@
 
 session_start();
 
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../app/Models/Mahasiswa.php';
 
-require_once __DIR__ . '/../app/Controllers/AuthController.php';
-require_once __DIR__ . '/../app/Controllers/MahasiswaController.php';
-require_once __DIR__ . '/../app/Controllers/HomeController.php';
+// =====================================================
+// AUTOLOAD (namespace App\ => folder app/)
+// =====================================================
 
-require_once __DIR__ . '/../app/Core/Middleware/AuthMiddleware.php';
+spl_autoload_register(function (string $class): void {
 
-$routes = require_once __DIR__ . '/../routes/web.php';
+    $prefix = 'App\\';
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
+        return;
+    }
 
-$basePath = '/si-akademik7/public';
+    $relative = substr($class, strlen($prefix));
 
-if (str_starts_with($uri, $basePath)) {
-    $uri = substr($uri, strlen($basePath));
+    $file = __DIR__ . '/../app/' . str_replace('\\', '/', $relative) . '.php';
+
+    if (is_file($file)) {
+        require $file;
+    }
+});
+
+
+// =====================================================
+// LOAD ROUTES
+// =====================================================
+
+$routes = require __DIR__ . '/../routes/web.php';
+
+
+// =====================================================
+// AMBIL & BERSIHKAN URI
+// =====================================================
+
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+
+$uri = parse_url($requestUri, PHP_URL_PATH);
+
+$uri = rtrim($uri, '/');
+
+
+// =====================================================
+// TENTUKAN URI ROUTE (buang base path)
+// =====================================================
+
+$basePath = '/bkpm/si-akademik7/public';
+
+if (strpos($uri, $basePath) === 0) {
+    $routeUri = substr($uri, strlen($basePath));
+} else {
+    $routeUri = $uri;
 }
 
-if ($uri === '') {
-    $uri = '/';
+if ($routeUri === '') {
+    $routeUri = '/';
 }
 
-$method = $_SERVER['REQUEST_METHOD'];
 
-if (isset($routes[$method][$uri])) {
+// =====================================================
+// JALANKAN ROUTE
+// =====================================================
 
-    $route = $routes[$method][$uri];
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-    $controllerClass = $route[0];
-    $action = $route[1];
+if (isset($routes[$method][$routeUri])) {
+
+    [$controllerClass, $action] = $routes[$method][$routeUri];
 
     $controller = new $controllerClass();
 
     $controller->$action();
 
-} else {
-
-    http_response_code(404);
-
-    echo "<h1>404 - Halaman Tidak Ditemukan</h1>";
+    exit;
 }
+
+
+// =====================================================
+// 404
+// =====================================================
+
+http_response_code(404);
+
+echo '<!DOCTYPE html>';
+echo '<html lang="id">';
+echo '<head>';
+echo '<meta charset="UTF-8">';
+echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
+echo '<title>404 - Halaman Tidak Ditemukan</title>';
+echo '</head>';
+echo '<body>';
+echo '<h1>404 - Halaman Tidak Ditemukan</h1>';
+echo '</body>';
+echo '</html>';

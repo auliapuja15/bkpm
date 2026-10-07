@@ -1,84 +1,95 @@
 <?php
 
-// Mulai session hanya jika belum aktif
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Database
-require_once __DIR__ . '/../config/database.php';
-
-// Models
-require_once __DIR__ . '/../app/Models/Mahasiswa.php';
-
-// Controllers
-require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/MahasiswaController.php';
-require_once __DIR__ . '/../app/Controllers/HomeController.php';
+require_once __DIR__ . '/../app/Controllers/ProdiController.php';
+require_once __DIR__ . '/../app/Controllers/MatakuliahController.php';
 
-// Middleware
-require_once __DIR__ . '/../app/Core/Middleware/AuthMiddleware.php';
+$base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Routes
-$routes = require_once __DIR__ . '/../routes/web.php';
-
-// Ambil URL
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-// Base path project
-$basePath = '/si-akademik8/public';
-
-if (str_starts_with($uri, $basePath)) {
-    $uri = substr($uri, strlen($basePath));
+if ($base !== '' && str_starts_with($path, $base)) {
+    $path = substr($path, strlen($base));
 }
 
-// Jika URL kosong
-if ($uri === '') {
-    $uri = '/';
-}
+$path = '/' . ltrim($path, '/');
+$path = rtrim($path, '/') ?: '/';
 
-// Method request
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Cek route
-if (isset($routes[$method][$uri])) {
+switch (true) {
+    case ($path === '/' || $path === '/mahasiswa') && $method === 'GET':
+        (new MahasiswaController())->index();
+        break;
 
-    $route = $routes[$method][$uri];
+    case $path === '/mahasiswa/create' && $method === 'GET':
+        (new MahasiswaController())->create();
+        break;
 
-    $controllerClass = $route[0];
-    $action = $route[1];
+    case $path === '/mahasiswa/store' && $method === 'POST':
+        (new MahasiswaController())->store();
+        break;
 
-    // Route yang membutuhkan login
-    $protectedRoutes = [
-        '/dashboard',
-        '/mahasiswa',
-        '/mahasiswa/create',
-        '/mahasiswa/edit',
-        '/mahasiswa/store',
-        '/mahasiswa/update',
-        '/mahasiswa/delete'
-    ];
+    case $path === '/mahasiswa/edit' && $method === 'GET':
+        (new MahasiswaController())->edit();
+        break;
 
-    // Jalankan middleware untuk route protected
-    if (in_array($uri, $protectedRoutes)) {
+    case $path === '/mahasiswa/update' && $method === 'POST':
+        (new MahasiswaController())->update();
+        break;
 
-        $middleware = new \App\Core\Middleware\AuthMiddleware();
+    case $path === '/mahasiswa/delete' && $method === 'GET':
+        (new MahasiswaController())->delete();
+        break;
 
-        $middleware->handle();
-    }
+    case $path === '/prodi' && $method === 'GET':
+        (new ProdiController())->index();
+        break;
 
-    // Tambahkan namespace Controller
-    $controllerClass = 'App\\Controllers\\' . $controllerClass;
+    case $path === '/prodi/create' && $method === 'GET':
+        (new ProdiController())->create();
+        break;
 
-    // Buat object controller
-    $controller = new $controllerClass();
+    case $path === '/prodi/store' && $method === 'POST':
+        (new ProdiController())->store();
+        break;
 
-    // Jalankan method controller
-    $controller->$action();
+    case $path === '/prodi/edit' && $method === 'GET':
+        (new ProdiController())->edit();
+        break;
 
-} else {
+    case $path === '/prodi/update' && $method === 'POST':
+        (new ProdiController())->update();
+        break;
 
-    http_response_code(404);
+    case $path === '/prodi/delete' && $method === 'GET':
+        (new ProdiController())->delete();
+        break;
 
-    echo "<h1>404 - Halaman Tidak Ditemukan</h1>";
+    case $path === '/matakuliah' && $method === 'GET':
+        (new MatakuliahController())->index();
+        break;
+
+    case $path === '/matakuliah/create' && $method === 'GET':
+        (new MatakuliahController())->create();
+        break;
+
+    case $path === '/matakuliah/store' && $method === 'POST':
+        (new MatakuliahController())->store();
+        break;
+
+    case $path === '/matakuliah/edit' && $method === 'GET':
+        (new MatakuliahController())->edit();
+        break;
+
+    case $path === '/matakuliah/update' && $method === 'POST':
+        (new MatakuliahController())->update();
+        break;
+
+    case $path === '/matakuliah/delete' && $method === 'GET':
+        (new MatakuliahController())->delete();
+        break;
+
+    default:
+        http_response_code(404);
+        echo '<h1>404</h1><p>Halaman tidak ditemukan.</p>';
 }

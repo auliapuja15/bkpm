@@ -14,7 +14,7 @@ class AuthMiddleware
             empty($_SESSION['logged_in']) ||
             $_SESSION['logged_in'] !== true
         ) {
-            header('Location: /si-akademik6/public/login');
+            header('Location: /bkpm/si-akademik7/public/login');
             exit;
         }
     }

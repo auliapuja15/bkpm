@@ -2,14 +2,19 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Tambah Mahasiswa</title>
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
+
 </head>
 
 <body>
@@ -35,6 +40,7 @@
 
         </div>
 
+
         <div class="mb-3">
 
             <label class="form-label">
@@ -47,6 +53,7 @@
                 name="nama">
 
         </div>
+
 
         <div class="mb-3">
 
@@ -61,16 +68,22 @@
 
         </div>
 
+
         <button
             type="submit"
             class="btn btn-primary">
+
             Simpan
+
         </button>
 
+
         <a
-            href="/acara6/public/mahasiswa"
+            href="/bkpm/si-akademik7/public/mahasiswa"
             class="btn btn-secondary">
+
             Kembali
+
         </a>
 
     </form>
@@ -78,4 +91,5 @@
 </div>
 
 </body>
+
 </html>

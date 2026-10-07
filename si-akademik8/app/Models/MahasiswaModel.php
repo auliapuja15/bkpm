@@ -4,16 +4,129 @@ require_once __DIR__ . '/Model.php';
 
 class MahasiswaModel extends Model
 {
-    public function all()
+    public function all(string $search = ''): array
     {
-        $query = "SELECT mahasiswa.*, program_studi.nama_prodi
-                  FROM mahasiswa
-                  JOIN program_studi
-                  ON mahasiswa.id_prodi = program_studi.id_prodi";
+        $sql = "SELECT
+                    m.id,
+                    m.nim,
+                    m.nama,
+                    m.prodi_id,
+                    p.kode AS kode_prodi,
+                    p.nama AS nama_prodi,
+                    m.angkatan,
+                    m.status
+                FROM mahasiswa m
+                LEFT JOIN prodi p ON p.id = m.prodi_id";
 
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
+        if ($search !== '') {
+            $sql .= " WHERE m.nim LIKE :nim_search
+                      OR m.nama LIKE :nama_search";
+        }
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sql .= " ORDER BY m.nim ASC";
+
+        $stmt = $this->db->prepare($sql);
+
+        if ($search !== '') {
+            $keyword = '%' . $search . '%';
+            $stmt->execute([
+                'nim_search' => $keyword,
+                'nama_search' => $keyword,
+            ]);
+        } else {
+            $stmt->execute();
+        }
+
+        return $stmt->fetchAll();
+    }
+
+    public function find(int $id): ?array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT id, nim, nama, prodi_id, angkatan, status
+             FROM mahasiswa
+             WHERE id = :id"
+        );
+
+        $stmt->execute(['id' => $id]);
+
+        $data = $stmt->fetch();
+
+        return $data ?: null;
+    }
+
+    public function create(array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO mahasiswa
+                (nim, nama, prodi_id, angkatan, status)
+             VALUES
+                (:nim, :nama, :prodi_id, :angkatan, :status)"
+        );
+
+        return $stmt->execute([
+            'nim' => $data['nim'],
+            'nama' => $data['nama'],
+            'prodi_id' => $data['prodi_id'],
+            'angkatan' => $data['angkatan'],
+            'status' => $data['status'],
+        ]);
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE mahasiswa
+             SET nim = :nim,
+                 nama = :nama,
+                 prodi_id = :prodi_id,
+                 angkatan = :angkatan,
+                 status = :status
+             WHERE id = :id"
+        );
+
+        return $stmt->execute([
+            'id' => $id,
+            'nim' => $data['nim'],
+            'nama' => $data['nama'],
+            'prodi_id' => $data['prodi_id'],
+            'angkatan' => $data['angkatan'],
+            'status' => $data['status'],
+        ]);
+    }
+
+    public function delete(int $id): bool
+    {
+        $stmt = $this->db->prepare(
+            "DELETE FROM mahasiswa WHERE id = :id"
+        );
+
+        return $stmt->execute(['id' => $id]);
+    }
+
+    public function existsByNim(string $nim, ?int $exceptId = null): bool
+    {
+        if ($exceptId !== null) {
+            $stmt = $this->db->prepare(
+                "SELECT COUNT(*)
+                 FROM mahasiswa
+                 WHERE nim = :nim AND id != :id"
+            );
+
+            $stmt->execute([
+                'nim' => $nim,
+                'id' => $exceptId,
+            ]);
+        } else {
+            $stmt = $this->db->prepare(
+                "SELECT COUNT(*)
+                 FROM mahasiswa
+                 WHERE nim = :nim"
+            );
+
+            $stmt->execute(['nim' => $nim]);
+        }
+
+        return (int) $stmt->fetchColumn() > 0;
     }
 }

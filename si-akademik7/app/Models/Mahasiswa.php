@@ -6,26 +6,27 @@ use PDO;
 
 class Mahasiswa
 {
-    private $pdo;
+    private PDO $pdo;
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
-    public function getAll()
+    public function getAll(): array
     {
         $sql = "
             SELECT
-                mahasiswa.nim,
-                mahasiswa.nama,
-                program_studi.nama_prodi,
-                mahasiswa.angkatan,
-                mahasiswa.status
-            FROM mahasiswa
-            LEFT JOIN program_studi
-                ON mahasiswa.id_prodi = program_studi.id_prodi
-            ORDER BY mahasiswa.nim ASC
+                m.id,
+                m.nim,
+                m.nama,
+                m.prodi,
+                m.status,
+                d.nama AS nama_dosen
+            FROM mahasiswa AS m
+            LEFT JOIN dosen AS d
+                ON m.dosen_id = d.id
+            ORDER BY m.id ASC
         ";
 
         $stmt = $this->pdo->prepare($sql);

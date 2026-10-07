@@ -1,29 +1,31 @@
 <?php
 
-$config = [
-    'host' => 'localhost',
-    'dbname' => 'si_akademik1',
-    'username' => 'root',
-    'password' => '',
-    'charset' => 'utf8mb4'
-];
+class Database
+{
+    private static ?PDO $instance = null;
 
-try {
+    private function __construct() {}
 
-    $pdo = new PDO(
-        "mysql:host=" . $config['host'] .
-        ";dbname=" . $config['dbname'] .
-        ";charset=" . $config['charset'],
-        $config['username'],
-        $config['password'],
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false
-        ]
-    );
+    public static function getInstance(): PDO
+    {
+        if (self::$instance === null) {
+            $host = 'localhost';
+            $dbname = 'si_akademik';
+            $username = 'root';
+            $password = '';
 
-} catch (PDOException $e) {
+            self::$instance = new PDO(
+                "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+                $username,
+                $password,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                ]
+            );
+        }
 
-    die("Koneksi database gagal: " . $e->getMessage());
+        return self::$instance;
+    }
 }

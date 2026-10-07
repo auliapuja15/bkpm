@@ -6,38 +6,49 @@ use App\Controllers\MahasiswaController;
 
 $routes = [
 
+    // ==========================================
+    // ROUTE GET
+    // ==========================================
+
     'GET' => [
 
+        // Halaman utama
         '/' => [
             HomeController::class,
             'index'
         ],
 
+        // Login
         '/login' => [
             AuthController::class,
             'login'
         ],
 
+        // Logout
         '/logout' => [
             AuthController::class,
             'logout'
         ],
 
+        // Dashboard
         '/dashboard' => [
             HomeController::class,
             'index'
         ],
 
+        // Data Mahasiswa
         '/mahasiswa' => [
             MahasiswaController::class,
             'index'
         ],
 
+        // Tambah Mahasiswa
         '/mahasiswa/create' => [
             MahasiswaController::class,
             'create'
         ],
 
+        // Edit Mahasiswa
         '/mahasiswa/edit' => [
             MahasiswaController::class,
             'edit'
@@ -45,8 +56,14 @@ $routes = [
 
     ],
 
+
+    // ==========================================
+    // ROUTE POST
+    // ==========================================
+
     'POST' => [
 
+        // Proses Login
         '/login/process' => [
             AuthController::class,
             'processLogin'
@@ -55,5 +72,10 @@ $routes = [
     ],
 
 ];
+
+
+// ==========================================
+// KEMBALIKAN SEMUA ROUTE
+// ==========================================
 
 return $routes;

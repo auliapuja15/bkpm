@@ -1,135 +1,171 @@
 <?php
 
-namespace App\Controllers;
-
-require_once __DIR__ . '/../Models/Mahasiswa.php';
-
-use App\Models\Mahasiswa;
+require_once __DIR__ . '/../Models/MahasiswaModel.php';
+require_once __DIR__ . '/../Models/ProdiModel.php';
 
 class MahasiswaController
 {
-    // Menampilkan semua mahasiswa
-    public function index()
+    private MahasiswaModel $model;
+    private ProdiModel $prodiModel;
+
+    public function __construct()
     {
-        global $pdo;
+        $this->model = new MahasiswaModel();
+        $this->prodiModel = new ProdiModel();
+    }
 
-        $model = new Mahasiswa($pdo);
-
-        $keyword = $_GET['search'] ?? '';
-
-        if ($keyword !== '') {
-            $mahasiswa = $model->search($keyword);
-        } else {
-            $mahasiswa = $model->getAll();
-        }
+    public function index(): void
+    {
+        $search = trim($_GET['search'] ?? '');
+        $mahasiswa = $this->model->all($search);
 
         require __DIR__ . '/../Views/mahasiswa/index.php';
     }
 
-    // Menampilkan form tambah
-    public function create()
+    public function create(): void
     {
-        global $pdo;
+        $prodi = $this->prodiModel->all();
 
-        $model = new Mahasiswa($pdo);
-        $prodi = $model->getProgramStudi();
+        $data = [
+            'nim' => '',
+            'nama' => '',
+            'prodi_id' => '',
+            'angkatan' => '',
+            'status' => 'aktif',
+        ];
+
+        $errors = [];
 
         require __DIR__ . '/../Views/mahasiswa/create.php';
     }
 
-    // Menyimpan mahasiswa
-    public function store()
+    public function store(): void
     {
-        global $pdo;
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /si-akademik8/public/mahasiswa');
-            exit;
-        }
-
-        $model = new Mahasiswa($pdo);
-
         $data = [
-            'nim' => trim($_POST['nim']),
-            'nama' => trim($_POST['nama']),
-            'id_prodi' => $_POST['id_prodi'],
-            'angkatan' => $_POST['angkatan'],
-            'status' => $_POST['status']
+            'nim' => trim($_POST['nim'] ?? ''),
+            'nama' => trim($_POST['nama'] ?? ''),
+            'prodi_id' => (int) ($_POST['prodi_id'] ?? 0),
+            'angkatan' => (int) ($_POST['angkatan'] ?? 0),
+            'status' => $_POST['status'] ?? 'aktif',
         ];
 
-        $model->create($data);
+        $errors = $this->validate($data);
 
-        header('Location: /si-akademik8/public/mahasiswa');
-        exit;
+        if ($this->model->existsByNim($data['nim'])) {
+            $errors[] = 'NIM sudah digunakan.';
+        }
+
+        if ($errors) {
+            $prodi = $this->prodiModel->all();
+            require __DIR__ . '/../Views/mahasiswa/create.php';
+            return;
+        }
+
+        try {
+            $this->model->create($data);
+            $this->redirect('/mahasiswa');
+        } catch (PDOException $e) {
+            $errors[] = 'Data mahasiswa gagal disimpan.';
+            $prodi = $this->prodiModel->all();
+            require __DIR__ . '/../Views/mahasiswa/create.php';
+        }
     }
 
-    // Menampilkan form edit
-    public function edit()
+    public function edit(): void
     {
-        global $pdo;
+        $id = (int) ($_GET['id'] ?? 0);
+        $data = $this->model->find($id);
 
-        $nim = $_GET['nim'] ?? null;
-
-        if (!$nim) {
-            header('Location: /si-akademik8/public/mahasiswa');
-            exit;
+        if (!$data) {
+            $this->redirect('/mahasiswa');
         }
 
-        $model = new Mahasiswa($pdo);
-
-        $mahasiswa = $model->find($nim);
-        $prodi = $model->getProgramStudi();
-
-        if (!$mahasiswa) {
-            header('Location: /si-akademik8/public/mahasiswa');
-            exit;
-        }
+        $prodi = $this->prodiModel->all();
+        $errors = [];
 
         require __DIR__ . '/../Views/mahasiswa/edit.php';
     }
 
-    // Mengupdate mahasiswa
-    public function update()
+    public function update(): void
     {
-        global $pdo;
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /si-akademik8/public/mahasiswa');
-            exit;
-        }
-
-        $nim = $_POST['nim'];
+        $id = (int) ($_POST['id'] ?? 0);
 
         $data = [
-            'nama' => trim($_POST['nama']),
-            'id_prodi' => $_POST['id_prodi'],
-            'angkatan' => $_POST['angkatan'],
-            'status' => $_POST['status']
+            'nim' => trim($_POST['nim'] ?? ''),
+            'nama' => trim($_POST['nama'] ?? ''),
+            'prodi_id' => (int) ($_POST['prodi_id'] ?? 0),
+            'angkatan' => (int) ($_POST['angkatan'] ?? 0),
+            'status' => $_POST['status'] ?? 'aktif',
         ];
 
-        $model = new Mahasiswa($pdo);
-        $model->update($nim, $data);
+        $errors = $this->validate($data);
 
-        header('Location: /si-akademik8/public/mahasiswa');
-        exit;
-    }
-
-    // Menghapus mahasiswa
-    public function destroy()
-    {
-        global $pdo;
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /si-akademik8/public/mahasiswa');
-            exit;
+        if ($this->model->existsByNim($data['nim'], $id)) {
+            $errors[] = 'NIM sudah digunakan oleh mahasiswa lain.';
         }
 
-        $nim = $_POST['nim'];
+        if ($errors) {
+            $data['id'] = $id;
+            $prodi = $this->prodiModel->all();
+            require __DIR__ . '/../Views/mahasiswa/edit.php';
+            return;
+        }
 
-        $model = new Mahasiswa($pdo);
-        $model->delete($nim);
+        try {
+            $this->model->update($id, $data);
+            $this->redirect('/mahasiswa');
+        } catch (PDOException $e) {
+            $errors[] = 'Data mahasiswa gagal diperbarui.';
+            $data['id'] = $id;
+            $prodi = $this->prodiModel->all();
+            require __DIR__ . '/../Views/mahasiswa/edit.php';
+        }
+    }
 
-        header('Location: /si-akademik8/public/mahasiswa');
+    public function delete(): void
+    {
+        $id = (int) ($_GET['id'] ?? 0);
+
+        if ($id > 0) {
+            $this->model->delete($id);
+        }
+
+        $this->redirect('/mahasiswa');
+    }
+
+    private function validate(array $data): array
+    {
+        $errors = [];
+
+        if ($data['nim'] === '') {
+            $errors[] = 'NIM wajib diisi.';
+        }
+
+        if ($data['nama'] === '') {
+            $errors[] = 'Nama wajib diisi.';
+        }
+
+        if ($data['prodi_id'] <= 0) {
+            $errors[] = 'Program studi wajib dipilih.';
+        }
+
+        if ($data['angkatan'] < 2000 || $data['angkatan'] > 2100) {
+            $errors[] = 'Angkatan harus diisi dengan tahun yang valid.';
+        }
+
+        if (!in_array($data['status'], ['aktif', 'cuti', 'lulus'], true)) {
+            $errors[] = 'Status mahasiswa tidak valid.';
+        }
+
+        return $errors;
+    }
+
+    private function redirect(string $path): void
+    {
+        header(
+            'Location: ' . dirname($_SERVER['SCRIPT_NAME']) . $path
+        );
+
         exit;
     }
 }

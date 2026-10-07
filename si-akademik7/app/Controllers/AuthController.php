@@ -17,16 +17,17 @@ class AuthController
         if ($username === 'admin' && $password === '12345') {
 
             $_SESSION['user'] = $username;
+            $_SESSION['logged_in'] = true;
             $_SESSION['flash'] = 'Selamat datang, Admin';
 
-            header('Location: /si-akademik6/public/dashboard');
+            header('Location: /bkpm/si-akademik7/public/dashboard');
             exit;
 
         } else {
 
             $_SESSION['error'] = 'Username atau password salah';
 
-            header('Location: /si-akademik6/public/login');
+            header('Location: /bkpm/si-akademik7/public/login');
             exit;
         }
     }
@@ -35,9 +36,13 @@ class AuthController
     {
         $_SESSION = [];
 
+        session_destroy();
+
+        session_start();
+
         $_SESSION['flash'] = 'Anda telah logout';
 
-        header('Location: /si-akademik6/public/login');
+        header('Location: /bkpm/si-akademik7/public/login');
         exit;
     }
 }

@@ -5,8 +5,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $flash = $_SESSION['flash'] ?? null;
+$error = $_SESSION['error'] ?? null;
 
 unset($_SESSION['flash']);
+unset($_SESSION['error']);
 
 ?>
 
@@ -44,7 +46,6 @@ unset($_SESSION['flash']);
 
                 <div class="card-body">
 
-                    <!-- Flash Message -->
                     <?php if ($flash): ?>
 
                         <div
@@ -64,9 +65,22 @@ unset($_SESSION['flash']);
                     <?php endif; ?>
 
 
+                    <?php if ($error): ?>
+
+                        <div
+                            class="alert alert-danger"
+                            role="alert">
+
+                            <?= htmlspecialchars($error) ?>
+
+                        </div>
+
+                    <?php endif; ?>
+
+
                     <form
                         method="POST"
-                        action="/si-akademik6/public/login/process">
+                        action="/bkpm/si-akademik7/public/login/process">
 
                         <div class="mb-3">
 

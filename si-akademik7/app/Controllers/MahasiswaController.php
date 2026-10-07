@@ -2,17 +2,15 @@
 
 namespace App\Controllers;
 
-use App\Models\Mahasiswa;
+use App\Models\MahasiswaModel;
 
 class MahasiswaController
 {
     public function index()
     {
-        global $pdo;
+        $model = new MahasiswaModel();
 
-        $model = new Mahasiswa($pdo);
-
-        $mahasiswa = $model->getAll();
+        $mahasiswa = $model->all();
 
         require __DIR__ . '/../Views/mahasiswa/index.php';
     }

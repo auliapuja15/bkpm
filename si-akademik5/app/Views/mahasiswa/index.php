@@ -1,57 +1,54 @@
-<div class="container mt-4">
+<!DOCTYPE html>
+<html lang="id">
 
-    <h1 class="mb-4">Daftar Mahasiswa</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <title>Daftar Mahasiswa</title>
 
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+</head>
 
-                    <thead class="table-dark">
-                        <tr>
-                            <th>No</th>
-                            <th>NIM</th>
-                            <th>Nama</th>
-                            <th>Prodi</th>
-                            <th>Angkatan</th>
-                        </tr>
-                    </thead>
+<body>
 
-                    <tbody>
+    <div class="container mt-4">
 
-                        <?php $no = 1; ?>
+        <h1 class="mb-4">Daftar Mahasiswa</h1>
 
-                        <?php foreach ($mahasiswa as $mhs): ?>
+        <table class="table table-bordered table-striped">
 
-                            <tr>
-                                <td><?= $no++; ?></td>
+            <thead class="table-dark">
+                <tr>
+                    <th>No</th>
+                    <th>NIM</th>
+                    <th>Nama</th>
+                    <th>Angkatan</th>
+                </tr>
+            </thead>
 
-                                <td>
-                                    <?= htmlspecialchars($mhs->getNim()); ?>
-                                </td>
+            <tbody>
 
-                                <td>
-                                    <?= htmlspecialchars($mhs->getNama()); ?>
-                                </td>
+                <?php $no = 1; ?>
 
-                                <td>
-                                    <?= htmlspecialchars($mhs->getProdi()); ?>
-                                </td>
+                <?php foreach ($mahasiswa as $mhs): ?>
 
-                                <td>
-                                    <?= htmlspecialchars($mhs->getAngkatan()); ?>
-                                </td>
-                            </tr>
+                    <tr>
+                        <td><?= $no++; ?></td>
+                        <td><?= $mhs->getNim(); ?></td>
+                        <td><?= $mhs->getNama(); ?></td>
+                        <td><?= $mhs->getAngkatan(); ?></td>
+                    </tr>
 
-                        <?php endforeach; ?>
+                <?php endforeach; ?>
 
-                    </tbody>
+            </tbody>
 
-                </table>
-            </div>
+        </table>
 
-        </div>
     </div>
 
-</div>
+</body>
+
+</html>
