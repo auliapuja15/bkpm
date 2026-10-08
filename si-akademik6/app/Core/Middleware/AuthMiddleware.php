@@ -10,11 +10,8 @@ class AuthMiddleware
             session_start();
         }
 
-        if (
-            empty($_SESSION['logged_in']) ||
-            $_SESSION['logged_in'] !== true
-        ) {
-            header('Location: /si-akademik6/public/login');
+        if (empty($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+            header('Location: ' . BASE_URL . '/login');
             exit;
         }
     }

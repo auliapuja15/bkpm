@@ -43,7 +43,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
                     <form
                         method="POST"
-                        action="/bkpm/acara9/public/login"
+                        action="<?= BASE_URL ?>/login"
                     >
 
                         <div class="mb-3">

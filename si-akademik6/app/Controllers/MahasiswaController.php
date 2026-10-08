@@ -4,21 +4,18 @@ namespace App\Controllers;
 
 class MahasiswaController
 {
-    // Halaman daftar mahasiswa
-    public function index()
+    // Data sementara (belum pakai database)
+    private array $mahasiswa = [
+        ['nim' => 'E41250290', 'nama' => 'Azira Mutia Gani',        'prodi' => 'Teknik Informatika'],
+        ['nim' => 'E41250656', 'nama' => 'Nindia Tri Anggraini',     'prodi' => 'Teknik Informatika'],
+        ['nim' => 'E41251544', 'nama' => 'Aulia Luh Bilqis',        'prodi' => 'Teknik Informatika'],
+        ['nim' => 'E41251311', 'nama' => 'Agustin Riski Rahmania',  'prodi' => 'Teknik Informatika'],
+    ];
+
+    public function index(): void
     {
+        $mahasiswa = $this->mahasiswa;
+
         require __DIR__ . '/../Views/mahasiswa/index.php';
-    }
-
-    // Halaman tambah mahasiswa
-    public function create()
-    {
-        require __DIR__ . '/../Views/mahasiswa/create.php';
-    }
-
-    // Halaman edit mahasiswa
-    public function edit()
-    {
-        require __DIR__ . '/../Views/mahasiswa/edit.php';
     }
 }

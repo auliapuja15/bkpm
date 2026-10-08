@@ -2,9 +2,9 @@
 
 namespace App\Controllers;
 
-class HomeController
+class DashboardController
 {
-    public function index()
+    public function index(): void
     {
         require __DIR__ . '/../Views/dashboard/index.php';
     }

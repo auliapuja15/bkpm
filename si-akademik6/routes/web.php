@@ -1,58 +1,13 @@
 <?php
 
-use App\Controllers\HomeController;
-use App\Controllers\AuthController;
-use App\Controllers\MahasiswaController;
-
-$routes = [
-
+return [
     'GET' => [
-
-        '/' => [
-            HomeController::class,
-            'index'
-        ],
-
-        '/login' => [
-            AuthController::class,
-            'login'
-        ],
-
-        '/logout' => [
-            AuthController::class,
-            'logout'
-        ],
-
-        '/dashboard' => [
-            HomeController::class,
-            'index'
-        ],
-
-        '/mahasiswa' => [
-            MahasiswaController::class,
-            'index'
-        ],
-
-        '/mahasiswa/create' => [
-            MahasiswaController::class,
-            'create'
-        ],
-
-        '/mahasiswa/edit' => [
-            MahasiswaController::class,
-            'edit'
-        ],
+        '/login'     => ['AuthController', 'loginForm'],
+        '/logout'    => ['AuthController', 'logout'],
+        '/dashboard' => ['DashboardController', 'index', 'middleware' => ['AuthMiddleware']],
+        '/mahasiswa' => ['MahasiswaController', 'index', 'middleware' => ['AuthMiddleware']],
     ],
-
     'POST' => [
-
-        '/login/process' => [
-            AuthController::class,
-            'processLogin'
-        ],
-
+        '/login'     => ['AuthController', 'login'],
     ],
-
 ];
-
-return $routes;

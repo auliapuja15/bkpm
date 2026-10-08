@@ -2,7 +2,7 @@
 
 <form
     method="POST"
-    action="/bkpm/acara9/public/mahasiswa/<?= $mahasiswa['id'] ?>"
+    action="<?= BASE_URL ?>/mahasiswa/<?= $mahasiswa['id'] ?>"
 >
 
     <div class="mb-3">
@@ -41,7 +41,7 @@
             type="text"
             name="prodi"
             class="form-control"
-            value="<?= htmlspecialchars($mahasiswa['prodi']) ?>"
+            value="<?= htmlspecialchars($mahasiswa['prodi'] ?? '') ?>"
             required
         >
 
@@ -93,7 +93,7 @@
     </button>
 
     <a
-        href="/bkpm/acara9/public/mahasiswa"
+        href="<?= BASE_URL ?>/mahasiswa"
         class="btn btn-secondary"
     >
         Kembali

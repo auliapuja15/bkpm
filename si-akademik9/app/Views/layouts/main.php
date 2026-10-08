@@ -27,7 +27,7 @@
 
         <a
             class="navbar-brand"
-            href="/bkpm/acara9/public/mahasiswa"
+            href="<?= BASE_URL ?>/mahasiswa"
         >
             SI Akademik
         </a>

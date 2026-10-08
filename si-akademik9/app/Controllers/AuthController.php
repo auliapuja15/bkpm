@@ -9,7 +9,9 @@ class AuthController
 
     public function login()
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
         if ($username === 'admin' && $password === '12345') {
@@ -17,22 +19,26 @@ class AuthController
             $_SESSION['user_name'] = 'Admin';
             $_SESSION['logged_in'] = true;
             $_SESSION['flash'] = 'Selamat datang, Admin';
-            header('Location: /bkpm/acara9/public/dashboard');
+            header('Location: ' . BASE_URL . '/dashboard');
             exit();
         } else {
             $_SESSION['flash'] = 'Username atau password salah';
-            header('Location: /bkpm/acara9/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
     }
 
     public function logout()
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         session_destroy();
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $_SESSION['flash'] = 'Anda telah logout';
-        header('Location: /bkpm/acara9/public/login');
+        header('Location: ' . BASE_URL . '/login');
         exit();
     }
 }

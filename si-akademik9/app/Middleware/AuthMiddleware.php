@@ -8,7 +8,7 @@ class AuthMiddleware
             session_start();
         }
         if (empty($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-            header('Location: /bkpm/acara9/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
     }

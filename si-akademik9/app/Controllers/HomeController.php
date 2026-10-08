@@ -25,13 +25,13 @@ class HomeController
             unset($_SESSION['flash']);
         }
 
-        echo "<a href='/bkpm/acara9/public/mahasiswa'>";
+        echo "<a href='" . BASE_URL . "/mahasiswa'>";
         echo 'Daftar Mahasiswa';
         echo '</a>';
 
         echo '<br><br>';
 
-        echo "<a href='/bkpm/acara9/public/logout'>";
+        echo "<a href='" . BASE_URL . "/logout'>";
         echo 'Logout';
         echo '</a>';
     }

@@ -1,9 +1,7 @@
 <?php
 
 $routes = [
-
     'GET' => [
-
         '/' => [
             'controller' => 'HomeController',
             'action' => 'index',
@@ -32,44 +30,22 @@ $routes = [
             'middleware' => ['AuthMiddleware'],
         ],
 
-        '/mahasiswa/edit' => [
-            'controller' => 'MahasiswaController',
-            'action' => 'edit',
-            'middleware' => ['AuthMiddleware'],
-        ],
-
         '/logout' => [
             'controller' => 'AuthController',
             'action' => 'logout',
         ],
-
     ],
 
     'POST' => [
-
         '/login' => [
             'controller' => 'AuthController',
             'action' => 'login',
         ],
 
-        '/mahasiswa/store' => [
+        '/mahasiswa' => [
             'controller' => 'MahasiswaController',
             'action' => 'store',
             'middleware' => ['AuthMiddleware'],
         ],
-
-        '/mahasiswa/update' => [
-            'controller' => 'MahasiswaController',
-            'action' => 'update',
-            'middleware' => ['AuthMiddleware'],
-        ],
-
-        '/mahasiswa/delete' => [
-            'controller' => 'MahasiswaController',
-            'action' => 'destroy',
-            'middleware' => ['AuthMiddleware'],
-        ],
-
     ],
-
 ];

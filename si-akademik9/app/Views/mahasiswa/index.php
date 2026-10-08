@@ -1,240 +1,78 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Mahasiswa</title>
+<h2>Data Mahasiswa</h2>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 30px;
-        }
+<a
+    href="<?= BASE_URL ?>/mahasiswa/create"
+    class="btn btn-primary mb-3"
+>
+    + Tambah Mahasiswa
+</a>
 
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
+<table class="table table-bordered">
 
-        h2 {
-            margin-top: 0;
-            color: #333;
-        }
+    <thead class="table-dark">
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+        <tr>
+            <th>No</th>
+            <th>NIM</th>
+            <th>Nama</th>
+            <th>Prodi</th>
+            <th>Status</th>
+            <th>Dosen ID</th>
+            <th>Aksi</th>
+        </tr>
 
-        .btn {
-            display: inline-block;
-            padding: 9px 14px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-        }
+    </thead>
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
+    <tbody>
 
-        .btn-danger {
-            background-color: #dc3545;
-        }
-
-        .btn-danger:hover {
-            background-color: #b02a37;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #343a40;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        .aksi {
-            display: flex;
-            gap: 5px;
-        }
-
-        .btn-edit {
-            background-color: #ffc107;
-            color: #212529;
-        }
-
-        .btn-edit:hover {
-            background-color: #e0a800;
-        }
-
-        .search-form {
-            margin-bottom: 20px;
-        }
-
-        .search-form input {
-            padding: 9px;
-            width: 250px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .search-form button {
-            padding: 9px 14px;
-            border: none;
-            border-radius: 5px;
-            background-color: #28a745;
-            color: white;
-            cursor: pointer;
-        }
-
-        .search-form button:hover {
-            background-color: #218838;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <div class="top-bar">
-        <h2>Data Mahasiswa</h2>
-
-        <a href="/bkpm/acara9/public/mahasiswa/create" class="btn">
-            + Tambah Mahasiswa
-        </a>
-    </div>
-
-    <form method="GET" action="/bkpm/acara9/public/mahasiswa" class="search-form">
-        <input
-            type="text"
-            name="keyword"
-            placeholder="Cari NIM atau Nama..."
-            value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>"
-        >
-
-        <button type="submit">Cari</button>
-    </form>
-
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>NIM</th>
-                <th>Nama</th>
-                <th>Program Studi</th>
-                <th>Angkatan</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-        <?php if (!empty($mahasiswa)): ?>
-
-            <?php $no = 1; ?>
-
-            <?php foreach ($mahasiswa as $m): ?>
-
-                <tr>
-                    <td><?= $no++ ?></td>
-
-                    <td>
-                        <?= htmlspecialchars($m['nim']) ?>
-                    </td>
-
-                    <td>
-                        <?= htmlspecialchars($m['nama']) ?>
-                    </td>
-
-                    <td>
-                        <?= htmlspecialchars($m['nama_prodi']) ?>
-                    </td>
-
-                    <td>
-                        <?= htmlspecialchars($m['angkatan']) ?>
-                    </td>
-
-                    <td>
-                        <?= htmlspecialchars($m['status']) ?>
-                    </td>
-
-                    <td>
-                        <div class="aksi">
-
-                            <a
-                                href="/si-akademik9/public/mahasiswa/edit?nim=<?= urlencode($m['nim']) ?>"
-                                class="btn btn-edit"
-                            >
-                                Edit
-                            </a>
-
-                            <form
-                                action="/si-akademik9/public/mahasiswa/delete"
-                                method="POST"
-                                style="display:inline;"
-                            >
-                                <input
-                                    type="hidden"
-                                    name="nim"
-                                    value="<?= htmlspecialchars($m['nim']) ?>"
-                                >
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-danger"
-                                    onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')"
-                                >
-                                    Hapus
-                                </button>
-                            </form>
-
-                        </div>
-                    </td>
-                </tr>
-
-            <?php endforeach; ?>
-
-        <?php else: ?>
+        <?php foreach ($mahasiswa as $no => $mhs): ?>
 
             <tr>
-                <td colspan="7" style="text-align:center;">
-                    Belum ada data mahasiswa.
+
+                <td><?= $no + 1 ?></td>
+
+                <td><?= htmlspecialchars($mhs['nim']) ?></td>
+
+<td><?= htmlspecialchars($mhs['nama']) ?></td>
+
+<td><?= htmlspecialchars($mhs['prodi_nama'] ?? '-') ?></td>
+
+<td><?= htmlspecialchars($mhs['status']) ?></td>
+
+<td>
+    <?= $mhs['dosen_id'] !== null
+        ? htmlspecialchars((string) $mhs['dosen_id'])
+        : '-'
+    ?>
+</td>
+                <td>
+
+                    <a
+                        href="<?= BASE_URL ?>/mahasiswa/<?= $mhs['id'] ?>/edit"
+                        class="btn btn-warning btn-sm"
+                    >
+                        Edit
+                    </a>
+
+                    <form
+                        method="POST"
+                        action="<?= BASE_URL ?>/mahasiswa/<?= $mhs['id'] ?>/delete"
+                        style="display:inline"
+                        onsubmit="return confirm('Yakin ingin menghapus data?')"
+                    >
+
+                        <button class="btn btn-danger btn-sm">
+                            Hapus
+                        </button>
+
+                    </form>
+
                 </td>
+
             </tr>
 
-        <?php endif; ?>
+        <?php endforeach; ?>
 
-        </tbody>
-    </table>
+    </tbody>
 
-</div>
-
-</body>
-</html>
+</table>

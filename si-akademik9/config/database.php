@@ -2,7 +2,7 @@
 
 return [
     'host' => 'localhost',
-    'dbname' => 'si_akademik1',
+    'dbname' => 'si_akademik',
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8mb4',

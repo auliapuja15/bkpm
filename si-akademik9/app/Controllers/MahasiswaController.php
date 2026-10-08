@@ -45,7 +45,7 @@ class MahasiswaController
             $this->repo->create($mahasiswa);
 
             header(
-                'Location: /bkpm/acara9/public/mahasiswa'
+                'Location: ' . BASE_URL . '/mahasiswa'
             );
 
             exit;
@@ -88,7 +88,7 @@ class MahasiswaController
             $this->repo->update($id, $mahasiswa);
 
             header(
-                'Location: /bkpm/acara9/public/mahasiswa'
+                'Location: ' . BASE_URL . '/mahasiswa'
             );
 
             exit;
@@ -104,7 +104,7 @@ class MahasiswaController
         $this->repo->delete($id);
 
         header(
-            'Location: /bkpm/acara9/public/mahasiswa'
+            'Location: ' . BASE_URL . '/mahasiswa'
         );
 
         exit;

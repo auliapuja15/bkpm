@@ -2,36 +2,93 @@
 
 session_start();
 
+// Base URL otomatis mengikuti lokasi folder public di server
+// (tidak peduli nama folder induknya, mis. /BKPM/acara9/public)
+define('BASE_URL', rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/'));
+
 require_once __DIR__ . '/../routes/web.php';
 
 require_once __DIR__ . '/../app/Core/Database.php';
 require_once __DIR__ . '/../app/Models/Mahasiswa.php';
-require_once __DIR__ . '/../app/Models/MahasiswaRepository.php';
+require_once __DIR__ . '/../app/Repositories/MahasiswaRepository.php';
 
 require_once __DIR__ . '/../app/Controllers/MahasiswaController.php';
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/HomeController.php';
 
-require_once __DIR__ . '/../app/Core/Middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../app/Middleware/AuthMiddleware.php';
 
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
+$base = BASE_URL;
 
-// Base path project
-$base = '/bkpm/si-akademik9/public';
-
-
-// Hilangkan base path
-if (str_starts_with($uri, $base)) {
+if ($base !== '' && stripos($uri, $base) === 0) {
     $uri = substr($uri, strlen($base));
 }
 
+$uri = rtrim($uri, '/');
 
-// Jika kosong
 if ($uri === '') {
     $uri = '/';
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Route dengan parameter Mahasiswa
+|--------------------------------------------------------------------------
+*/
+
+if (
+    $method === 'GET' &&
+    preg_match('#^/mahasiswa/([0-9]+)/edit$#', $uri, $matches)
+) {
+
+    $middleware = new AuthMiddleware();
+    $middleware->handle();
+
+    $controller = new MahasiswaController(
+        new MahasiswaRepository(Database::getInstance())
+    );
+
+    $controller->edit((int) $matches[1]);
+    exit;
+}
+
+
+if (
+    $method === 'POST' &&
+    preg_match('#^/mahasiswa/([0-9]+)$#', $uri, $matches)
+) {
+
+    $middleware = new AuthMiddleware();
+    $middleware->handle();
+
+    $controller = new MahasiswaController(
+        new MahasiswaRepository(Database::getInstance())
+    );
+
+    $controller->update((int) $matches[1]);
+    exit;
+}
+
+
+if (
+    $method === 'POST' &&
+    preg_match('#^/mahasiswa/([0-9]+)/delete$#', $uri, $matches)
+) {
+
+    $middleware = new AuthMiddleware();
+    $middleware->handle();
+
+    $controller = new MahasiswaController(
+        new MahasiswaRepository(Database::getInstance())
+    );
+
+    $controller->destroy((int) $matches[1]);
+    exit;
 }
 
 
@@ -93,9 +150,7 @@ $action = $route['action'];
 if ($controllerName === 'MahasiswaController') {
 
     $controller = new MahasiswaController(
-        new MahasiswaRepository(
-            Database::getInstance()
-        )
+        new MahasiswaRepository(Database::getInstance())
     );
 
 } elseif ($controllerName === 'AuthController') {
@@ -130,6 +185,5 @@ if (!method_exists($controller, $action)) {
 
     exit;
 }
-
 
 $controller->$action();
