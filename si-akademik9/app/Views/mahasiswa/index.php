@@ -35,7 +35,7 @@
 
 <td><?= htmlspecialchars($mhs['nama']) ?></td>
 
-<td><?= htmlspecialchars($mhs['prodi_nama'] ?? '-') ?></td>
+<td><?= htmlspecialchars($mhs['nama_prodi'] ?? '-') ?></td>
 
 <td><?= htmlspecialchars($mhs['status']) ?></td>
 
