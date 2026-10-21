@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^mahasiswa/([0-9]+)/?$ mahasiswa.php?id=$1 [L,QSA]
